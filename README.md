@@ -9,7 +9,7 @@ A cylindrical grenade with a fuse of 1.5s to guarantee a quick kill. Deals 300 d
 The thermobaric bomb but as a grenade, there's nothing to add to it except the fact that fuse times are random each time.
 
 # BB Grenade
-A grenade that throws shrapnel with no damage and has a very small explosion and still no damage. Still works as a decoy grenade, scaring away NPCs and players that get PTSD on the first sight of a grenade
+A grenade that throws shrapnel with no damage and has a very small explosion and still no damage. Still works as a decoy grenade, scaring away NPCs and players that get PTSD on the first sight of a grenade, 3 second fuse
 
 # Toxic Gas Grenade
 
