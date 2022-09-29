@@ -9,8 +9,13 @@ A cylindrical grenade with a fuse of 1.5s to guarantee a quick kill. Deals 300 d
 The thermobaric bomb but as a grenade, there's nothing to add to it except the fact that fuse times are random each time.
 
 # BB Grenade
-A grenade that throws shrapnel with no damage and has a very small explosion and still no damage. Still works as a decoy grenade, scaring away NPCs and players that get PTSD on the first sight of a grenade, 3 second fuse
+A grenade that throws shrapnel with no damage and has a very small explosion and still no damage. Still works as a decoy grenade, scaring away NPCs and players that get PTSD on the first sight of a grenade, has a fuse of 3 seconds
 
 # Toxic Gas Grenade
 
 The smoke grenade modified to release a chemical agent when primed. Has no fuse time and will release the toxin the moment you let go of the spoon, so use it wisely
+
+
+
+# JMod Extras Category
+The JMod Extras category is temporary until I decide so, but know that it isn't staying and the contents of the add-on will be merged with default JMod
