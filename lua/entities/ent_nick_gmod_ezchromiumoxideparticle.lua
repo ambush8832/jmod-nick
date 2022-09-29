@@ -2,7 +2,7 @@
 AddCSLuaFile()
 ENT.Type="anim"
 ENT.PrintName="EZ Chromium Oxide Particle"
-ENT.Author="Jackarunda"
+ENT.Author="Nick"
 ENT.NoSitAllowed=true
 ENT.Editable=false
 ENT.Spawnable=false
