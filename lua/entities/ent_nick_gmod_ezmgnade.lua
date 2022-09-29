@@ -39,6 +39,7 @@ if(SERVER)then
 		self.DieTime = Time + 120
 		self.Range = 200
 		self.Power = 2
+		self.Size = 2
 		self:SetState(STATE_BURNING)
 	end
 
@@ -54,7 +55,7 @@ if(SERVER)then
 			end
 
 			if (self.NextEffect < Time) then
-				self.NextEffect=Time+0.2
+				self.NextEffect=Time+0.3
 				local Att, Infl = self.Owner or self, self or game.GetWorld()
 
 				for k, v in pairs(ents.FindInSphere(Pos, 200)) do
@@ -124,7 +125,7 @@ elseif(CLIENT)then
 		self:DrawModel()
 		if(self:GetState() == STATE_BURNING)then
 			render.SetMaterial(GlowSprite)
-			render.DrawSprite(Pos+VectorRand()*self.Size*math.Rand(0, .25), self.Size*math.Rand(.75, 1.25), self.Size*math.Rand(.50, 1), Color(255, 255, 255, 255))
+			render.DrawSprite(Pos+VectorRand()*self.Size*math.Rand(0, .05), self.Size*math.Rand(.75, 1.25), self.Size*math.Rand(.50, 1), Color(255, 255, 255, 255))
 
 			if (self.CastLight and not GAMEMODE.Lagging) then
 				local dlight=DynamicLight(self:EntIndex())
