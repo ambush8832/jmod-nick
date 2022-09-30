@@ -26,13 +26,13 @@ function EFFECT:Init(data)
 			local particle=emitter:Add("sprites/mat_jack_nicespark",Pos)
 
 			if(particle)then
-				particle:SetVelocity((Dir+VectorRand()*.2)*math.random(10,500)*Scayul)
+				particle:SetVelocity((Dir+VectorRand()*.2)*math.random(5,100)*Scayul)
 				
 				particle:SetLifeTime(0)
-				particle:SetDieTime(math.Rand(0.1,1.5))
+				particle:SetDieTime(math.Rand(0.1,2))
 				
-				local herpdemutterfickendenderp=math.Rand(200,255)
-				particle:SetColor(255,herpdemutterfickendenderp-10,herpdemutterfickendenderp-20)		
+				local colorRand=math.Rand(200,255)
+				particle:SetColor(255,colorRand-10,colorRand-20)		
 
 				particle:SetStartAlpha(255)
 				particle:SetEndAlpha(0)
@@ -47,7 +47,7 @@ function EFFECT:Init(data)
 				
 				particle:SetGravity(Vector(0,0,-600))
 
-				particle:SetLighting(false)
+				particle:SetLighting(true)
 				particle:SetCollide(true)
 				particle:SetBounce(0.95)
 

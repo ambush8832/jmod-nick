@@ -58,6 +58,12 @@ if(SERVER)then
 				self.NextEffect=Time+0.3
 				local Att, Infl = self.Owner or self, self or game.GetWorld()
 
+				local Eff=EffectData()
+				Eff:SetOrigin(self:GetPos()+self:GetRight()*10)
+				Eff:SetNormal(self:GetUp())
+				Eff:SetScale(10)
+				util.Effect("eff_nick_gmod_mgburn_smoky",Eff,true)
+
 				for k, v in pairs(ents.FindInSphere(Pos, 200)) do
 					local blacklist={
 						["vfire_ball"]=true,
@@ -74,7 +80,7 @@ if(SERVER)then
 						Dam:SetAttacker(Att)
 						Dam:SetInflictor(Infl)
 						v:TakeDamageInfo(Dam)
-						print("We dealt damage to: "..v:GetClass())
+						--print("We dealt damage to: "..v:GetClass())
 
 						if vFireInstalled then
 							CreateVFireEntFires(v, math.random(1, 3))
@@ -114,7 +120,7 @@ elseif(CLIENT)then
 		self.Ptype=1
 		self.TypeInfo={"Napalm", {Sound("snds_jack_gmod/fire1.wav"), Sound("snds_jack_gmod/fire2.wav")}, "eff_nick_gmod_mgburn_smoky", 15, 14, 100}
 		self.CastLight=(self.HighVisuals and math.random(1, 2) == 1) or (math.random(1, 10) == 1)
-		self.Size=self.TypeInfo[6]
+		self.Size=100
 		--self.FlameSprite=Material("mats_jack_halo_sprites/flamelet"..math.random(1,5))
 	end
 
