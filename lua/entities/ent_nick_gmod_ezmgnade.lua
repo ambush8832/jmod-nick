@@ -4,14 +4,15 @@ ENT.Base="ent_jack_gmod_ezgrenade"
 ENT.Author="Nick, AdventureBoots"
 ENT.Category="JMod Extras - EZ Explosives"
 ENT.PrintName="EZ Magnesium Grenade"
+ENT.JModPreferredCarryAngles=Angle(0,100,0)
 ENT.Spawnable=true
 
 ENT.Model="models/jmodels/explosives/grenades/firenade/incendiary_grenade.mdl"
---ENT.ModelScale=1.5
+ENT.Material="models/mats_nick_nades/magnesium"
 ENT.SpoonModel="models/jmodels/explosives/grenades/firenade/incendiary_grenade_spoon.mdl"
 
 local STATE_BURNING, ThinkRate = 6, 1
-
+local STATE_BURNT
 if(SERVER)then
 
 	function ENT:Prime()
@@ -23,7 +24,7 @@ if(SERVER)then
 	function ENT:Arm()
 		self:SetBodygroup(2, 1)
 		self:SetState(JMod.EZ_STATE_ARMED)
-		timer.Simple(2,function()
+		timer.Simple(0.8,function()
 			if(IsValid(self))then self:Detonate() end
 		end)
 		self:SpoonEffect()
@@ -32,8 +33,9 @@ if(SERVER)then
 	function ENT:Detonate()
 		if(self.Exploded)then return end
 		self.Exploded = true
+		self.BurnSound=CreateSound(self,"snds_jack_gmod/flareburn.wav")
+		self.BurnSound:Play()
 		local SelfPos, Owner, Time = self:LocalToWorld(self:OBBCenter()), self.Owner or self, CurTime()
-		--JMod.Sploom(Owner, SelfPos, 10)
 		self.NextSound = Time + 1
 		self.NextEffect = Time + 0.5
 		self.DieTime = Time + 120
@@ -41,6 +43,10 @@ if(SERVER)then
 		self.Power = 2
 		self.Size = 2
 		self:SetState(STATE_BURNING)
+	end
+
+	function ENT:OnRemove()
+	if(self.BurnSound)then self.BurnSound:Stop() end
 	end
 
 	function ENT:CustomThink(State, Time)
@@ -94,16 +100,19 @@ if(SERVER)then
 					CreateVFireBall(math.random(20, 30), math.random(10, 20), self:GetPos(), VectorRand()*math.random(200, 400), self:GetOwner())
 				end
 
-				if (math.random(1, 5) == 1) then
-					local Tr=util.QuickTrace(Pos, VectorRand()*self.Range, {self})
+				if (math.random(1, 1.1) == 1) then
+					local Tr=util.QuickTrace(Pos, VectorRand()*self.Range/2, {self})
 					if (Tr.Hit) then
-						util.Decal("Scorch", Tr.HitPos+Tr.HitNormal, Tr.HitPos-Tr.HitNormal)
+						util.Decal("Dark", Tr.HitPos+Tr.HitNormal, Tr.HitPos-Tr.HitNormal)
 					end
 				end
 			end
-		
+			
+
+			
 			if (IsValid(self)) then
 				if (self.DieTime < Time) then
+					self.BurnSound:Stop()
 					self:Remove()
 					return
 				end
@@ -114,6 +123,8 @@ if(SERVER)then
 		return true
 	end
 	
+
+
 elseif(CLIENT)then
 	function ENT:Initialize()
 		local HighVisuals=true
