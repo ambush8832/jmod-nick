@@ -33,7 +33,7 @@ if(SERVER)then
 		if(self.Exploded)then return end
 		self.Exploded = true
 		local SelfPos, Owner, Time = self:LocalToWorld(self:OBBCenter()), self.Owner or self, CurTime()
-		JMod.Sploom(Owner, SelfPos, 10)
+		--JMod.Sploom(Owner, SelfPos, 10)
 		self.NextSound = Time + 1
 		self.NextEffect = Time + 0.5
 		self.DieTime = Time + 120
@@ -61,7 +61,7 @@ if(SERVER)then
 				local Eff=EffectData()
 				Eff:SetOrigin(self:GetPos()+self:GetRight()*10)
 				Eff:SetNormal(self:GetUp())
-				Eff:SetScale(10)
+				Eff:SetScale(self.Size*5)
 				util.Effect("eff_nick_gmod_mgburn_smoky",Eff,true)
 
 				for k, v in pairs(ents.FindInSphere(Pos, 200)) do
@@ -84,7 +84,7 @@ if(SERVER)then
 
 						if vFireInstalled then
 							CreateVFireEntFires(v, math.random(1, 3))
-						elseif (math.random() <= 0.15) then
+						elseif (math.random() <= 0.20) then
 							v:Ignite(10)
 						end
 					end
