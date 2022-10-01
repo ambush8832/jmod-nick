@@ -5,7 +5,7 @@ ENT.Author="Nick"
 ENT.PrintName="EZ Fuel Air Grenade"
 ENT.Category="JMod Extras - EZ Explosives"
 ENT.Spawnable=true
-ENT.JModPreferredCarryAngles=Angle(0, -240, 0)
+ENT.JModPreferredCarryAngles=Angle(0,100,0)
 ENT.Model="models/jmodels/explosives/grenades/firenade/incendiary_grenade.mdl"
 ENT.Material="models/mats_nick_nades/thermobaric"
 ENT.HardThrowStr=250
@@ -47,7 +47,7 @@ if(self.Exploded)then return end
 		timer.Simple(.3,function()
 			util.ScreenShake(SelfPos,1000,3,2,2000*Oof)
 			---
-			util.BlastDamage(game.GetWorld(),Att,SelfPos,900,500)
+			util.BlastDamage(game.GetWorld(),Att,SelfPos,825,500)
 			---
 			for i=1,2*Oof do
 				sound.Play("ambient/explosions/explode_"..math.random(1,9)..".wav",SelfPos,math.random(80,110))
@@ -57,12 +57,12 @@ if(self.Exploded)then return end
 			JMod.BlastDoors(self,SelfPos,2*Oof)
 			---
 			timer.Simple(.2,function()
-				JMod.WreckBuildings(self,SelfPos,2*Oof,1000)
-				JMod.BlastDoors(self,SelfPos,2*Oof,1000)
+				JMod.WreckBuildings(self,SelfPos,2*Oof,910)
+				JMod.BlastDoors(self,SelfPos,2*Oof,910)
 			end)
 			timer.Simple(.4,function()
-				JMod.WreckBuildings(self,SelfPos,2*Oof,1000)
-				JMod.BlastDoors(self,SelfPos,2*Oof,1000)
+				JMod.WreckBuildings(self,SelfPos,2*Oof,910)
+				JMod.BlastDoors(self,SelfPos,2*Oof,910)
 			end)
 			---
 			timer.Simple(.1,function()
