@@ -21,7 +21,7 @@ if(SERVER)then
 		self:SetBodygroup(2, 1)
 		self:SetState(JMod.EZ_STATE_ARMED)
 		self:SpoonEffect()
-		timer.Simple(1.5, function()
+		timer.Simple(2.5, function()
 			if(IsValid(self))then self:Detonate() end
 		end)
 	end
@@ -30,12 +30,12 @@ if(SERVER)then
 		self.Exploded=true
 		local SelfPos=self:GetPos()
 		local PowerMult=0.69
-		JMod.Sploom(self.Owner,self:GetPos(),300,256)
-		JMod.BlastDoors(self.Owner, self:GetPos(), 100, 256, false)
+		JMod.Sploom(self.Owner,self:GetPos(),150,400)
+		JMod.BlastDoors(self.Owner, self:GetPos(), 100, 445, false)
 		self:EmitSound("snd_jack_fragsplodeclose.wav",90,100)
 		local plooie=EffectData()
 		plooie:SetOrigin(SelfPos)
-		plooie:SetScale(.5	)
+		plooie:SetScale(0.5)
 		util.Effect("eff_jack_plastisplosion",plooie,true,true)
 		util.ScreenShake(SelfPos,99999,99999,1,750*1.75)
 		local OnGround=util.QuickTrace(SelfPos+Vector(0,0,5),Vector(0,0,-15),{self}).Hit

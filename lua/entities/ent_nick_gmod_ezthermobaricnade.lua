@@ -21,23 +21,24 @@ if(SERVER)then
 		self:SetBodygroup(2, 1)
 		self:SetState(JMod.EZ_STATE_ARMED)
 		self:SpoonEffect()
-		timer.Simple(math.random(3,7), function()
+		timer.Simple(5, function()
 			if(IsValid(self))then self:Detonate() end
 		end)
 	end
 	function ENT:Detonate()
 if(self.Exploded)then return end
 		self.Exploded=true
-		local SelfPos,Att=self:GetPos()+Vector(0,0,60),self.Owner or game.GetWorld()
+		local SelfPos,Att=self:GetPos()+Vector(0,0,0),self.Owner or game.GetWorld()
 		JMod.Sploom(Att,SelfPos,100)
 		---
 		if(self:WaterLevel()>=3)then self:Remove();return end
 		---
 		local Sploom=EffectData()
 		Sploom:SetOrigin(SelfPos)
+		Sploom:SetScale(0.5)
 		util.Effect("eff_jack_gmod_faebomb_predet",Sploom,true,true)
 		---
-		local Oof=.25
+		local Oof=.10
 		for i=1,500 do
 			local Tr=util.QuickTrace(SelfPos,VectorRand()*1000,self)
 			if(Tr.Hit)then Oof=Oof*1.005 end
@@ -46,22 +47,22 @@ if(self.Exploded)then return end
 		timer.Simple(.3,function()
 			util.ScreenShake(SelfPos,1000,3,2,2000*Oof)
 			---
-			util.BlastDamage(game.GetWorld(),Att,SelfPos,2000*Oof,200*Oof)
+			util.BlastDamage(game.GetWorld(),Att,SelfPos,900,500)
 			---
 			for i=1,2*Oof do
-				sound.Play("ambient/explosions/explode_"..math.random(1,9)..".wav",SelfPos+VectorRand()*1000,160,math.random(80,110))
+				sound.Play("ambient/explosions/explode_"..math.random(1,9)..".wav",SelfPos,math.random(80,110))
 			end
 			---
-			JMod.WreckBuildings(self,SelfPos,10*Oof)
-			JMod.BlastDoors(self,SelfPos,10*Oof)
+			JMod.WreckBuildings(self,SelfPos,2*Oof)
+			JMod.BlastDoors(self,SelfPos,2*Oof)
 			---
 			timer.Simple(.2,function()
-				JMod.WreckBuildings(self,SelfPos,10*Oof)
-				JMod.BlastDoors(self,SelfPos,10*Oof)
+				JMod.WreckBuildings(self,SelfPos,2*Oof,1000)
+				JMod.BlastDoors(self,SelfPos,2*Oof,1000)
 			end)
 			timer.Simple(.4,function()
-				JMod.WreckBuildings(self,SelfPos,10*Oof)
-				JMod.BlastDoors(self,SelfPos,10*Oof)
+				JMod.WreckBuildings(self,SelfPos,2*Oof,1000)
+				JMod.BlastDoors(self,SelfPos,2*Oof,1000)
 			end)
 			---
 			timer.Simple(.1,function()
@@ -71,7 +72,7 @@ if(self.Exploded)then return end
 			---
 			local Sploom=EffectData()
 			Sploom:SetOrigin(SelfPos)
-			Sploom:SetScale(Oof)
+			Sploom:SetScale(0.35)
 			util.Effect("eff_jack_gmod_faebomb_main",Sploom,true,true)
 		end)
 		self:Remove()

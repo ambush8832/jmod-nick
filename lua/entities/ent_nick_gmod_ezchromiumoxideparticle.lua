@@ -104,10 +104,10 @@ if(SERVER)then
 elseif(CLIENT)then
 	local Mat=Material("particles/smokey")
 	function ENT:Initialize()
-		self.Col=Color(math.random(100,120),math.random(100,150),100)
+		self.Col=Color(math.random(150,175),math.random(150,175),100)
 		self.Visible=true
 		self.Show=true
-		self.siz=1
+		self.siz=0.25
 		--timer.Simple(2,function()
 			--if(IsValid(self))then self.Visible=math.random(1,5)==2 end
 		--end)
