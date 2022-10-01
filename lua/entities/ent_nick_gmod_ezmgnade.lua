@@ -5,7 +5,7 @@ ENT.Author="Nick, AdventureBoots"
 ENT.Category="JMod Extras - EZ Explosives"
 ENT.PrintName="EZ Magnesium Grenade"
 ENT.JModPreferredCarryAngles=Angle(0,100,0)
-ENT.Spawnable=true
+ENT.Spawnable=false
 
 ENT.Model="models/jmodels/explosives/grenades/firenade/incendiary_grenade.mdl"
 ENT.Material="models/mats_nick_nades/magnesium"
