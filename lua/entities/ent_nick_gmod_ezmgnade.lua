@@ -12,7 +12,7 @@ ENT.Material="models/mats_nick_nades/magnesium"
 ENT.SpoonModel="models/jmodels/explosives/grenades/firenade/incendiary_grenade_spoon.mdl"
 
 local STATE_BURNING, ThinkRate = 6, 1
-local STATE_BURNT
+local STATE_BURNT = 2
 if(SERVER)then
 
 	function ENT:Prime()
@@ -20,7 +20,9 @@ if(SERVER)then
 		self:EmitSound("weapons/pinpull.wav", 60, 100)
 		self:SetBodygroup(3, 1)
 	end
-
+    --
+	local BurnMatApplied = false
+    --
 	function ENT:Arm()
 		self:SetBodygroup(2, 1)
 		self:SetState(JMod.EZ_STATE_ARMED)
@@ -45,6 +47,8 @@ if(SERVER)then
 		self:SetState(STATE_BURNING)
 	end
 
+
+
 	function ENT:OnRemove()
 	if(self.BurnSound)then self.BurnSound:Stop() end
 	end
@@ -52,6 +56,10 @@ if(SERVER)then
 	function ENT:CustomThink(State, Time)
 		if(self:GetState() == STATE_BURNING)then
 			local Pos, Dir = self:GetPos(), self:GetForward()
+			if(not(self.BurnMatApplied)and(STATE_BURNING))then
+				self.BurnMatApplied=true
+				self:SetMaterial("models/mats_nick_nades/magnesium_burnt")
+			end
 			--print(self:WaterLevel())
 			self:Extinguish()
 
@@ -61,14 +69,15 @@ if(SERVER)then
 			end
 
 			if (self.NextEffect < Time) then
-				self.NextEffect=Time+0.3
+				self.NextEffect=Time+0.01
 				local Att, Infl = self.Owner or self, self or game.GetWorld()
 
 				for k, v in pairs(ents.FindInSphere(Pos, 200)) do
 					local blacklist={
 						["vfire_ball"]=true,
 						["ent_jack_gmod_ezfirehazard"]=true,
-						["ent_jack_gmod_eznapalm"]=true
+						["ent_jack_gmod_eznapalm"]=true,
+						["ent_nick_gmod_chromiumoxideparticle"]=true
 					}
 
 					local Tr = util.QuickTrace(self:GetPos(), v:GetPos()-self:GetPos(), self)
@@ -84,8 +93,8 @@ if(SERVER)then
 
 						if vFireInstalled then
 							CreateVFireEntFires(v, math.random(1, 3))
-						elseif (math.random() <= 0.15) then
-							v:Ignite(10)
+						elseif (math.random() <= 1) then
+							v:Ignite(15)
 						end
 					end
 				end
@@ -94,7 +103,7 @@ if(SERVER)then
 					CreateVFireBall(math.random(20, 30), math.random(10, 20), self:GetPos(), VectorRand()*math.random(200, 400), self:GetOwner())
 				end
 
-				if (math.random(1, 1.1) == 1) then
+				if (math.random(1, 1.25) == 1) then
 					local Tr=util.QuickTrace(Pos, VectorRand()*self.Range/2, {self})
 					if (Tr.Hit) then
 						util.Decal("Dark", Tr.HitPos+Tr.HitNormal, Tr.HitPos-Tr.HitNormal)
@@ -107,7 +116,8 @@ if(SERVER)then
 			if (IsValid(self)) then
 				if (self.DieTime < Time) then
 					self.BurnSound:Stop()
-					self:Remove()
+					self:SetState(STATE_BURNT)
+					SafeRemoveEntityDelayed(self,20)
 					return
 				end
 				--self:NextThink(Time+(1/ThinkRate))
@@ -116,7 +126,7 @@ if(SERVER)then
 
 		return true
 	end
-	
+
 
 
 elseif(CLIENT)then
@@ -149,10 +159,10 @@ elseif(CLIENT)then
 					dlight.brightness=3
 					dlight.Decay=200
 					dlight.Size=400
-					dlight.DieTime=CurTime()+.5
+					dlight.DieTime=CurTime()+1
 				end
 			end
 		end
 	end
-	language.Add("ent_jack_gmod_ezfirenade", "EZ Magnesium Grenade")
+	language.Add("ent_nick_gmod_ezmgnade", "EZ Magnesium Incendiary Grenade")
 end
