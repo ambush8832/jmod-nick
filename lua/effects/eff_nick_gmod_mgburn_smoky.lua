@@ -55,10 +55,11 @@ function EFFECT:Init(data)
 		end
 		for i=1,2*Scl do
 			local ParticlePos = Pos + Dir + VectorRand() * 3
-			local particle = emitter:Add("sprites/mat_jack_smokeparticle", ParticlePos)
-			particle:SetVelocity(Vector(math.random(-200, 200), math.random(-200, 200), 10) + VectorRand() * 30)
+			--"sprites/mat_jack_smokeparticle"
+			local particle = emitter:Add("particles/smokey", ParticlePos)
+			particle:SetVelocity(Vector(math.random(-250, 250), math.random(-250, 250), 100) + VectorRand() * 30)
 			particle:SetAirResistance(150)
-			particle:SetGravity(Vector(0,0,0))
+			particle:SetGravity(Vector(0,0,-20))
 			particle:SetDieTime(math.Rand(1, 5))
 			particle:SetStartAlpha(math.random(50, 80))
 			particle:SetEndAlpha(0)

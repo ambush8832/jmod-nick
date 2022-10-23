@@ -43,9 +43,9 @@ if(SERVER)then
 		local SelfPos, Owner, Time = self:LocalToWorld(self:OBBCenter()), self.Owner or self, CurTime()
 		self.NextSound = Time + 1
 		self.NextEffect = Time + 0.5
-		self.DieTime = Time + 360
-		self.Range = 140
-		self.Power = 2
+		self.DieTime = Time + 120
+		self.Range = 150
+		self.Power = 3
 		self.Size = 2
 		self:SetState(STATE_BURNING)
 	end
@@ -73,7 +73,7 @@ if(SERVER)then
 			local DistanceFactor = (1 - DistToHit / self.Range) ^ 5
 			if not(blacklist[v:GetClass()]) and (IsValid(v:GetPhysicsObject())) and (Tr.Entity == v) then
 				local Dam=DamageInfo()
-				Dam:SetDamage(self.Power * DistanceFactor)-- * math.random(1, 5))
+				Dam:SetDamage(100 * self.Power * DistanceFactor)
 				Dam:SetDamageType(DMG_BURN)
 				Dam:SetDamagePosition(Pos)
 				Dam:SetAttacker(Att)
@@ -83,7 +83,7 @@ if(SERVER)then
 
 				if vFireInstalled then
 					CreateVFireEntFires(v, math.random(1, 3))
-				elseif math.random(1, 10) <= 10 then
+				elseif math.random(1, 10) <= 6 then
 					if not v:IsOnFire() then
 						v:Ignite(DistToHit / 10)
 					end
