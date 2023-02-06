@@ -7,7 +7,7 @@ ENT.PrintName="EZ Magnesium Grenade"
 ENT.JModPreferredCarryAngles=Angle(0,100,0)
 ENT.Spawnable=false
 
-ENT.Model="models/jmodels/explosives/grenades/firenade/incendiary_grenade.mdl"
+ENT.Model="models/jmod/explosives/grenades/firenade/incendiary_grenade.mdl"
 ENT.Material="models/mats_nick_nades/magnesium"
 ENT.SpoonModel="models/jmodels/explosives/grenades/firenade/incendiary_grenade_spoon.mdl"
 

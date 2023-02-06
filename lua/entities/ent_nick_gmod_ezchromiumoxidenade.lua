@@ -5,7 +5,7 @@ ENT.PrintName="EZ Toxic Gas Grenade"
 ENT.Category="JMod Extras - EZ Misc."
 ENT.Spawnable=true
 ENT.JModPreferredCarryAngles=Angle(0,100,0)
-ENT.Model="models/jmodels/explosives/grenades/firenade/incendiary_grenade.mdl"
+ENT.Model="models/jmod/explosives/grenades/firenade/incendiary_grenade.mdl"
 ENT.Material="models/mats_nick_nades/oxide"
 ENT.SpoonScale=2
 if(SERVER)then
@@ -33,7 +33,7 @@ if(SERVER)then
 			if(self.FuelLeft > 0)then
 				local Gas=ents.Create("ent_nick_gmod_ezchromiumoxideparticle")
 				Gas:SetPos(self:LocalToWorld(self:OBBCenter()))
-				JMod.Owner(Gas,self.Owner or self)
+				JMod.SetOwner(Gas,self.Owner or self)
 				Gas:Spawn()
 				Gas:Activate()
 				Gas:GetPhysicsObject():SetVelocity(self:GetPhysicsObject():GetVelocity()+self:GetUp()*math.random(10,100))
