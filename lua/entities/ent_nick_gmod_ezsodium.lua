@@ -17,7 +17,7 @@ if SERVER then
 		local ent = ents.Create(self.ClassName)
 		ent:SetAngles(Angle(0, 0, 0))
 		ent:SetPos(SpawnPos)
-		JMod.Owner(ent, ply)
+		JMod.EZowner(ent, ply)
 		ent:Spawn()
 		ent:Activate()
 
@@ -46,7 +46,7 @@ if SERVER then
 		if self.Exploded then return end
 		self.Exploded = true
 		local SelfPos = self:LocalToWorld(self:OBBCenter())
-		JMod.Sploom(self.Owner, SelfPos, math.random(10, 20))
+		JMod.Sploom(self.EZowner, SelfPos, math.random(10, 20))
 		self:Remove()
 	end
 

@@ -40,7 +40,7 @@ if(SERVER)then
 		self.Exploded = true
 		self.BurnSound = CreateSound(self,"snds_jack_gmod/flareburn.wav")
 		self.BurnSound:Play()
-		local SelfPos, Owner, Time = self:LocalToWorld(self:OBBCenter()), self.Owner or self, CurTime()
+		local SelfPos, Owner, Time = self:LocalToWorld(self:OBBCenter()), self.EZowner or self, CurTime()
 		self.NextSound = Time + 1
 		self.NextEffect = Time + 0.5
 		self.DieTime = Time + 120
@@ -58,7 +58,7 @@ if(SERVER)then
 
 	function ENT:BurnStuff()
 		local Pos, Dir = self:GetPos(), self:GetForward()
-		local Att, Infl = self.Owner or self, self or game.GetWorld()
+		local Att, Infl = self.EZowner or self, self or game.GetWorld()
 
 		for k, v in pairs(ents.FindInSphere(Pos, self.Range)) do
 			local blacklist={

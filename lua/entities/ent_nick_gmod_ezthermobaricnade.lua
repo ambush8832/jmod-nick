@@ -28,7 +28,7 @@ if(SERVER)then
 	function ENT:Detonate()
 if(self.Exploded)then return end
 		self.Exploded=true
-		local SelfPos,Att=self:GetPos()+Vector(0,0,0),self.Owner or game.GetWorld()
+		local SelfPos,Att=self:GetPos()+Vector(0,0,0),self.EZowner or game.GetWorld()
 		JMod.Sploom(Att,SelfPos,100)
 		---
 		if(self:WaterLevel()>=3)then self:Remove();return end

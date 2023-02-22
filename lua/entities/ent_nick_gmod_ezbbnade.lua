@@ -35,7 +35,7 @@ if(SERVER)then
 		plooie:SetScale(0.75)
 		util.Effect("eff_jack_bombletdetonate",plooie,true,true)
 		util.ScreenShake(SelfPos,99999,99999,1,750*0.25)
-		JMod.FragSplosion(self,SelfPos+Vector(0,0,20),50,-1,512,self.Owner or game.GetWorld())
+		JMod.FragSplosion(self,SelfPos+Vector(0,0,20),50,-1,512,self.EZowner or game.GetWorld())
 		local Spred=Vector(0,0,0)		
 		self:Remove()
 	end
