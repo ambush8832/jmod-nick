@@ -34,9 +34,9 @@ if(SERVER)then
 
 	function ENT:Detonate()
 		if(self.Exploded)then return end
-		if(self:WaterLevel() > 1)then 
-			self.UnderWater = true 
-		end
+		--if(self:WaterLevel() > 1)then 
+		--	self.UnderWater = true 
+		--end
 		self.Exploded = true
 		self.BurnSound = CreateSound(self,"snds_jack_gmod/flareburn.wav")
 		self.BurnSound:Play()
@@ -58,7 +58,7 @@ if(SERVER)then
 
 	function ENT:BurnStuff()
 		local Pos, Dir = self:GetPos(), self:GetForward()
-		local Att, Infl = self.EZowner or self, self or game.GetWorld()
+		local Att, Infl = self, JMod.GetEZowner(self)
 
 		for k, v in pairs(ents.FindInSphere(Pos, self.Range)) do
 			local blacklist={
@@ -73,7 +73,11 @@ if(SERVER)then
 			local DistanceFactor = (1 - DistToHit / self.Range) ^ 5
 			if not(blacklist[v:GetClass()]) and (IsValid(v:GetPhysicsObject())) and (Tr.Entity == v) then
 				local Dam=DamageInfo()
-				Dam:SetDamage(100 * self.Power * DistanceFactor)
+				if self.UnderWater then
+					Dam:SetDamage(10 * self.Power * DistanceFactor)
+				else
+					Dam:SetDamage(100 * self.Power * DistanceFactor)
+				end
 				Dam:SetDamageType(DMG_BURN)
 				Dam:SetDamagePosition(Pos)
 				Dam:SetAttacker(Att)
@@ -81,11 +85,13 @@ if(SERVER)then
 				v:TakeDamageInfo(Dam)
 				--print("We dealt damage to: "..v:GetClass())
 
-				if vFireInstalled then
-					CreateVFireEntFires(v, math.random(1, 3))
-				elseif math.random(1, 10) <= 6 then
-					if not v:IsOnFire() then
-						v:Ignite(DistToHit / 10)
+				if not(self.UnderWater) then
+					if vFireInstalled then
+						CreateVFireEntFires(v, math.random(1, 3))
+					elseif math.random(1, 10) <= 6 then
+						if not v:IsOnFire() then
+							v:Ignite(DistToHit / 20)
+						end
 					end
 				end
 			end
@@ -95,10 +101,32 @@ if(SERVER)then
 			CreateVFireBall(math.random(20, 30), math.random(10, 20), self:GetPos(), VectorRand()*math.random(200, 400), self:GetOwner())
 		end
 
-		if (math.random(1, 5) <= 1) then
-			local Tr=util.QuickTrace(Pos, VectorRand()*self.Range/2, {self})
-			if (Tr.Hit) then
-				util.Decal("Dark", Tr.HitPos+Tr.HitNormal, Tr.HitPos-Tr.HitNormal)
+		--if (math.random(1, 5) <= 1) then
+			
+		--end
+	end
+
+	function ENT:PhysicsCollide(data, collider)
+		local State = self:GetState()
+		local Pos, Dir = self:GetPos(), self:GetForward()
+		if data.DeltaTime > .2 then
+			if State == STATE_BURNING then
+				local Tr = util.QuickTrace(Pos, VectorRand() * self.Range/2, {self})
+				if (Tr.Hit) then
+					util.Decal("Dark", Tr.HitPos + Tr.HitNormal, Tr.HitPos-Tr.HitNormal)
+				end
+			end
+			if State == STATE_BURNING or STATE_BURNT then
+				local Ent = data.HitEntity
+				if IsValid(Ent) and Ent:IsPlayer() or Ent:IsNPC() then
+					local Dam = DamageInfo()
+					Dam:SetDamage(10 * self.Power)
+					Dam:SetDamageType(DMG_BURN)
+					Dam:SetDamagePosition(Pos)
+					Dam:SetAttacker(self or JMod.GetEZowner(self))
+					Dam:SetInflictor(JMod.GetEZowner(self))
+					v:TakeDamageInfo(Dam)
+				end
 			end
 		end
 	end
@@ -111,6 +139,8 @@ if(SERVER)then
 			end
 			if(self.UnderWater)then
 				if(self:WaterLevel() < 1)then self.UnderWater = false end
+			else
+				if(self:WaterLevel() > 0)then self.UnderWater = true end
 			end
 			self:Extinguish()
 
@@ -125,13 +155,15 @@ if(SERVER)then
 				local Eff = EffectData()
 				Eff:SetOrigin(self:GetPos())
 				Eff:SetNormal(self:GetRight() + VectorRand() * .1)
-				Eff:SetScale(self.Size * 2)
+				if self.UnderWater then
+					Eff:SetScale(self.Size * .5)
+				else
+					Eff:SetScale(self.Size * 2)
+				end
 				util.Effect("eff_nick_gmod_mgburn_smoky", Eff, true)
 
 				self:BurnStuff()
 			end
-			
-
 			
 			if (IsValid(self)) then
 				if (self.DieTime < Time) then
