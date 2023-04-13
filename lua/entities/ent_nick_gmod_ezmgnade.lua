@@ -9,7 +9,7 @@ ENT.Spawnable=false
 
 ENT.Model="models/jmod/explosives/grenades/firenade/incendiary_grenade.mdl"
 ENT.Material="models/mats_nick_nades/magnesium"
-ENT.SpoonModel="models/jmodels/explosives/grenades/firenade/incendiary_grenade_spoon.mdl"
+ENT.SpoonModel="models/jmod/explosives/grenades/firenade/incendiary_grenade_spoon.mdl"
 
 local STATE_BURNING, ThinkRate = 6, 1
 local STATE_BURNT = 2
