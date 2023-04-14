@@ -34,9 +34,9 @@ if(SERVER)then
 
 	function ENT:Detonate()
 		if(self.Exploded)then return end
-		--if(self:WaterLevel() > 1)then 
-		--	self.UnderWater = true 
-		--end
+		if(self:WaterLevel() > 1)then 
+			self.UnderWater = true 
+		end
 		self.Exploded = true
 		self.BurnSound = CreateSound(self,"snds_jack_gmod/flareburn.wav")
 		self.BurnSound:Play()
@@ -125,10 +125,14 @@ if(SERVER)then
 					Dam:SetDamagePosition(Pos)
 					Dam:SetAttacker(self or JMod.GetEZowner(self))
 					Dam:SetInflictor(JMod.GetEZowner(self))
-					v:TakeDamageInfo(Dam)
+					Ent:TakeDamageInfo(Dam)
 				end
 			end
 		end
+	end
+
+	function ENT:ExplodeAndSizzle()
+		if(self:WaterLevel() < 1)then self.UnderWater = false end
 	end
 
 	function ENT:CustomThink(State, Time)
@@ -137,16 +141,16 @@ if(SERVER)then
 				self.BurnMatApplied=true
 				self:SetMaterial("models/mats_nick_nades/magnesium_burnt")
 			end
+			self:Extinguish()
+
 			if(self.UnderWater)then
-				if(self:WaterLevel() < 1)then self.UnderWater = false end
+				self:ExplodeAndSizzle()
 			else
 				if(self:WaterLevel() > 0)then self.UnderWater = true end
 			end
-			self:Extinguish()
-
 			if (self.NextSound < Time) then
-				self.NextSound = Time+1
-				JMod.EmitAIsound(self:GetPos(),250,.5,8)
+				self.NextSound = Time + 1
+				JMod.EmitAIsound(self:GetPos(), 250, .5, 8)
 			end
 
 			if (self.NextEffect < Time) then
