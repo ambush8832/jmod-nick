@@ -1,0 +1,5 @@
+"VertexLitGeneric"
+{
+	"$basetexture" "models/mats_nick_nades/pushnade_sheet"
+	"$selfillum" "1"
+}
