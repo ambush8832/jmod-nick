@@ -7,9 +7,9 @@ ENT.PrintName="EZ Magnesium Grenade"
 ENT.JModPreferredCarryAngles=Angle(0,100,0)
 ENT.Spawnable=false
 
-ENT.Model="models/jmodels/explosives/grenades/firenade/incendiary_grenade.mdl"
+ENT.Model="models/jmod/explosives/grenades/firenade/incendiary_grenade.mdl"
 ENT.Material="models/mats_nick_nades/magnesium"
-ENT.SpoonModel="models/jmodels/explosives/grenades/firenade/incendiary_grenade_spoon.mdl"
+ENT.SpoonModel="models/jmod/explosives/grenades/firenade/incendiary_grenade_spoon.mdl"
 
 local STATE_BURNING, ThinkRate = 6, 1
 local STATE_BURNT = 2
@@ -34,15 +34,18 @@ if(SERVER)then
 
 	function ENT:Detonate()
 		if(self.Exploded)then return end
+		if(self:WaterLevel() > 1)then 
+			self.UnderWater = true 
+		end
 		self.Exploded = true
-		self.BurnSound=CreateSound(self,"snds_jack_gmod/flareburn.wav")
+		self.BurnSound = CreateSound(self,"snds_jack_gmod/flareburn.wav")
 		self.BurnSound:Play()
-		local SelfPos, Owner, Time = self:LocalToWorld(self:OBBCenter()), self.Owner or self, CurTime()
+		local SelfPos, Owner, Time = self:LocalToWorld(self:OBBCenter()), self.EZowner or self, CurTime()
 		self.NextSound = Time + 1
 		self.NextEffect = Time + 0.5
 		self.DieTime = Time + 120
-		self.Range = 200
-		self.Power = 2
+		self.Range = 150
+		self.Power = 3
 		self.Size = 2
 		self:SetState(STATE_BURNING)
 	end
@@ -50,68 +53,121 @@ if(SERVER)then
 
 
 	function ENT:OnRemove()
-	if(self.BurnSound)then self.BurnSound:Stop() end
+		if(self.BurnSound)then self.BurnSound:Stop() end
+	end
+
+	function ENT:BurnStuff()
+		local Pos, Dir = self:GetPos(), self:GetForward()
+		local Att, Infl = self, JMod.GetEZowner(self)
+
+		for k, v in pairs(ents.FindInSphere(Pos, self.Range)) do
+			local blacklist={
+				["vfire_ball"]=true,
+				["ent_jack_gmod_ezfirehazard"]=true,
+				["ent_jack_gmod_eznapalm"]=true,
+				["ent_nick_gmod_chromiumoxideparticle"]=true
+			}
+
+			local Tr = util.QuickTrace(self:GetPos(), v:GetPos()-self:GetPos(), self)
+			local DistToHit = Pos:Distance(Tr.HitPos)
+			local DistanceFactor = (1 - DistToHit / self.Range) ^ 5
+			if not(blacklist[v:GetClass()]) and (IsValid(v:GetPhysicsObject())) and (Tr.Entity == v) then
+				local Dam=DamageInfo()
+				if self.UnderWater then
+					Dam:SetDamage(10 * self.Power * DistanceFactor)
+				else
+					Dam:SetDamage(100 * self.Power * DistanceFactor)
+				end
+				Dam:SetDamageType(DMG_BURN)
+				Dam:SetDamagePosition(Pos)
+				Dam:SetAttacker(Att)
+				Dam:SetInflictor(Infl)
+				v:TakeDamageInfo(Dam)
+				--print("We dealt damage to: "..v:GetClass())
+
+				if not(self.UnderWater) then
+					if vFireInstalled then
+						CreateVFireEntFires(v, math.random(1, 3))
+					elseif math.random(1, 10) <= 6 then
+						if not v:IsOnFire() then
+							v:Ignite(DistToHit / 20)
+						end
+					end
+				end
+			end
+		end
+
+		if vFireInstalled and math.random(1, 10) <= 1 then
+			CreateVFireBall(math.random(20, 30), math.random(10, 20), self:GetPos(), VectorRand()*math.random(200, 400), self:GetOwner())
+		end
+
+		--if (math.random(1, 5) <= 1) then
+			
+		--end
+	end
+
+	function ENT:PhysicsCollide(data, collider)
+		local State = self:GetState()
+		local Pos, Dir = self:GetPos(), self:GetForward()
+		if data.DeltaTime > .2 then
+			if State == STATE_BURNING then
+				local Tr = util.QuickTrace(Pos, VectorRand() * self.Range/2, {self})
+				if (Tr.Hit) then
+					util.Decal("Dark", Tr.HitPos + Tr.HitNormal, Tr.HitPos-Tr.HitNormal)
+				end
+			end
+			if State == STATE_BURNING or STATE_BURNT then
+				local Ent = data.HitEntity
+				if IsValid(Ent) and Ent:IsPlayer() or Ent:IsNPC() then
+					local Dam = DamageInfo()
+					Dam:SetDamage(10 * self.Power)
+					Dam:SetDamageType(DMG_BURN)
+					Dam:SetDamagePosition(Pos)
+					Dam:SetAttacker(self or JMod.GetEZowner(self))
+					Dam:SetInflictor(JMod.GetEZowner(self))
+					Ent:TakeDamageInfo(Dam)
+				end
+			end
+		end
+	end
+
+	function ENT:ExplodeAndSizzle()
+		if(self:WaterLevel() < 1)then self.UnderWater = false end
 	end
 
 	function ENT:CustomThink(State, Time)
 		if(self:GetState() == STATE_BURNING)then
-			local Pos, Dir = self:GetPos(), self:GetForward()
 			if(not(self.BurnMatApplied)and(STATE_BURNING))then
 				self.BurnMatApplied=true
 				self:SetMaterial("models/mats_nick_nades/magnesium_burnt")
 			end
-			--print(self:WaterLevel())
 			self:Extinguish()
 
+			if(self.UnderWater)then
+				self:ExplodeAndSizzle()
+			else
+				if(self:WaterLevel() > 0)then self.UnderWater = true end
+			end
 			if (self.NextSound < Time) then
-				self.NextSound=Time+1
-				JMod.EmitAIsound(self:GetPos(),300,.5,8)
+				self.NextSound = Time + 1
+				JMod.EmitAIsound(self:GetPos(), 250, .5, 8)
 			end
 
 			if (self.NextEffect < Time) then
-				self.NextEffect=Time+0.01
-				local Att, Infl = self.Owner or self, self or game.GetWorld()
+				self.NextEffect = Time + 0.01
 
-				for k, v in pairs(ents.FindInSphere(Pos, 200)) do
-					local blacklist={
-						["vfire_ball"]=true,
-						["ent_jack_gmod_ezfirehazard"]=true,
-						["ent_jack_gmod_eznapalm"]=true,
-						["ent_nick_gmod_chromiumoxideparticle"]=true
-					}
-
-					local Tr = util.QuickTrace(self:GetPos(), v:GetPos()-self:GetPos(), self)
-					if not(blacklist[v:GetClass()]) and (IsValid(v:GetPhysicsObject())) and (Tr.Entity == v) then
-						local Dam=DamageInfo()
-						Dam:SetDamage(self.Power*math.Rand(.75, 1.25))
-						Dam:SetDamageType(DMG_BURN)
-						Dam:SetDamagePosition(Pos)
-						Dam:SetAttacker(Att)
-						Dam:SetInflictor(Infl)
-						v:TakeDamageInfo(Dam)
-						print("We dealt damage to: "..v:GetClass())
-
-						if vFireInstalled then
-							CreateVFireEntFires(v, math.random(1, 3))
-						elseif (math.random() <= 1) then
-							v:Ignite(15)
-						end
-					end
+				local Eff = EffectData()
+				Eff:SetOrigin(self:GetPos())
+				Eff:SetNormal(self:GetRight() + VectorRand() * .1)
+				if self.UnderWater then
+					Eff:SetScale(self.Size * .5)
+				else
+					Eff:SetScale(self.Size * 2)
 				end
+				util.Effect("eff_nick_gmod_mgburn_smoky", Eff, true)
 
-				if vFireInstalled and math.random() <= 0.01 then
-					CreateVFireBall(math.random(20, 30), math.random(10, 20), self:GetPos(), VectorRand()*math.random(200, 400), self:GetOwner())
-				end
-
-				if (math.random(1, 1.25) == 1) then
-					local Tr=util.QuickTrace(Pos, VectorRand()*self.Range/2, {self})
-					if (Tr.Hit) then
-						util.Decal("Dark", Tr.HitPos+Tr.HitNormal, Tr.HitPos-Tr.HitNormal)
-					end
-				end
+				self:BurnStuff()
 			end
-			
-
 			
 			if (IsValid(self)) then
 				if (self.DieTime < Time) then
@@ -135,7 +191,7 @@ elseif(CLIENT)then
 		self.Ptype=1
 		self.TypeInfo={"Napalm", {Sound("snds_jack_gmod/fire1.wav"), Sound("snds_jack_gmod/fire2.wav")}, "eff_nick_gmod_mgburn_smoky", 15, 14, 100}
 		self.CastLight=(self.HighVisuals and math.random(1, 2) == 1) or (math.random(1, 10) == 1)
-		self.Size=self.TypeInfo[6]
+		self.Size=100
 		--self.FlameSprite=Material("mats_jack_halo_sprites/flamelet"..math.random(1,5))
 	end
 

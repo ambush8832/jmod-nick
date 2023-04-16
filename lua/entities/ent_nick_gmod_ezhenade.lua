@@ -6,7 +6,7 @@ ENT.PrintName="EZ HE Grenade"
 ENT.Category="JMod Extras - EZ Explosives"
 ENT.Spawnable=true
 ENT.JModPreferredCarryAngles=Angle(0,100,0)
-ENT.Model="models/jmodels/explosives/grenades/firenade/incendiary_grenade.mdl"
+ENT.Model="models/jmod/explosives/grenades/firenade/incendiary_grenade.mdl"
 ENT.Material="models/mats_nick_nades/highexplosive_alt"
 ENT.HardThrowStr=350
 ENT.SoftThrowStr=250
@@ -30,8 +30,8 @@ if(SERVER)then
 		self.Exploded=true
 		local SelfPos=self:GetPos()
 		local PowerMult=0.69
-		JMod.Sploom(self.Owner,self:GetPos(),150,400)
-		JMod.BlastDoors(self.Owner, self:GetPos(), 100, 445, false)
+		JMod.Sploom(self.EZowner,self:GetPos(),150,400)
+		JMod.BlastDoors(self.EZowner, self:GetPos(), 100, 445, false)
 		self:EmitSound("snd_jack_fragsplodeclose.wav",90,100)
 		local plooie=EffectData()
 		plooie:SetOrigin(SelfPos)

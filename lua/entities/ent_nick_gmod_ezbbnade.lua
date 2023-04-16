@@ -6,7 +6,7 @@ ENT.PrintName="EZ BB Grenade"
 ENT.Category="JMod Extras - EZ Misc."
 ENT.Spawnable=true
 ENT.JModPreferredCarryAngles=Angle(0,100,0)
-ENT.Model="models/jmodels/explosives/grenades/firenade/incendiary_grenade.mdl"
+ENT.Model="models/jmod/explosives/grenades/firenade/incendiary_grenade.mdl"
 ENT.Material="models/mats_nick_nades/airsoft"
 ENT.HardThrowStr=700
 ENT.SoftThrowStr=500
@@ -35,7 +35,7 @@ if(SERVER)then
 		plooie:SetScale(0.75)
 		util.Effect("eff_jack_bombletdetonate",plooie,true,true)
 		util.ScreenShake(SelfPos,99999,99999,1,750*0.25)
-		JMod.FragSplosion(self,SelfPos+Vector(0,0,20),50,-1,512,self.Owner or game.GetWorld())
+		JMod.FragSplosion(self,SelfPos+Vector(0,0,20),50,-1,512,self.EZowner or game.GetWorld())
 		local Spred=Vector(0,0,0)		
 		self:Remove()
 	end

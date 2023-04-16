@@ -6,7 +6,7 @@ ENT.PrintName="EZ Fuel Air Grenade"
 ENT.Category="JMod Extras - EZ Explosives"
 ENT.Spawnable=true
 ENT.JModPreferredCarryAngles=Angle(0,100,0)
-ENT.Model="models/jmodels/explosives/grenades/firenade/incendiary_grenade.mdl"
+ENT.Model="models/jmod/explosives/grenades/firenade/incendiary_grenade.mdl"
 ENT.Material="models/mats_nick_nades/thermobaric"
 ENT.HardThrowStr=250
 ENT.SoftThrowStr=100
@@ -28,7 +28,7 @@ if(SERVER)then
 	function ENT:Detonate()
 if(self.Exploded)then return end
 		self.Exploded=true
-		local SelfPos,Att=self:GetPos()+Vector(0,0,0),self.Owner or game.GetWorld()
+		local SelfPos,Att=self:GetPos()+Vector(0,0,0),self.EZowner or game.GetWorld()
 		JMod.Sploom(Att,SelfPos,100)
 		---
 		if(self:WaterLevel()>=3)then self:Remove();return end

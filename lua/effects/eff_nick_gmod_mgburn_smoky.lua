@@ -8,36 +8,38 @@ function EFFECT:Init(data)
 	local Scl=Scayul
 	local Pos=vOffset
 	
-	if(self:WaterLevel()==3)then
+	--[[if(self:WaterLevel()==3)then
 		local Splach=EffectData()
 		Splach:SetOrigin(vOffset)
 		Splach:SetNormal(Vector(0,0,1))
 		Splach:SetScale(Scayul*200)
 		util.Effect("WaterSplash",Splach)
 		return
-	end
+	end]]--
+
+	local SmokeParticles = {"sprites/smoke/mat_nick_smoke1", "sprites/smoke/mat_nick_smoke2", "sprites/smoke/mat_nick_smoke3"}--, "sprites/smoke/mat_nick_smoke4"}
 
 	local emitter=ParticleEmitter(vOffset)
 	if(emitter)then
-		for i=0, 30*Scayul^0.5 do
+		for i=0, 25*Scayul^0.5 do
 
 			local Pos=(data:GetOrigin())
 		
 			local particle=emitter:Add("sprites/mat_jack_nicespark",Pos)
 
 			if(particle)then
-				particle:SetVelocity((Dir+VectorRand()*.2)*math.random(10,500)*Scayul)
+				particle:SetVelocity((Dir+VectorRand()*1)*math.random(5,100)*Scayul)
 				
 				particle:SetLifeTime(0)
-				particle:SetDieTime(math.Rand(0.1,1.5))
+				particle:SetDieTime(math.Rand(0.1,2))
 				
-				local herpdemutterfickendenderp=math.Rand(200,255)
-				particle:SetColor(255,herpdemutterfickendenderp-10,herpdemutterfickendenderp-20)		
+				local colorRand = math.Rand(200, 255)
+				particle:SetColor(255, colorRand - 50, colorRand - 200)		
 
 				particle:SetStartAlpha(255)
 				particle:SetEndAlpha(0)
 
-				particle:SetStartSize(1)
+				particle:SetStartSize(1.5)
 				particle:SetEndSize(0)
 				
 				particle:SetRoll(math.Rand(-360, 360))
@@ -47,28 +49,29 @@ function EFFECT:Init(data)
 				
 				particle:SetGravity(Vector(0,0,-600))
 
-				particle:SetLighting(false)
+				particle:SetLighting(true)
 				particle:SetCollide(true)
 				particle:SetBounce(0.95)
 
 			end
 		end
 		for i=1,2*Scl do
-			local ParticlePos=Pos+Dir+VectorRand()*3
-			local particle=emitter:Add("particle/smokestack",ParticlePos)
-			particle:SetVelocity(Vector(0,0,math.random(1,200))+VectorRand()*30)
+			local ParticlePos = Pos + Dir + VectorRand() * 3
+			--"sprites/mat_jack_smokeparticle"
+			local particle = emitter:Add(SmokeParticles[math.random(1, #SmokeParticles)], ParticlePos)
+			particle:SetVelocity(Vector(math.random(-250, 250), math.random(-250, 250), math.random(100, 250)) + VectorRand() * 30)
 			particle:SetAirResistance(150)
-			particle:SetGravity(Vector(0,0,0))
-			particle:SetDieTime(math.Rand(.1,1))
-			particle:SetStartAlpha(math.random(50,255))
+			particle:SetGravity(Vector(0,0,-100))
+			particle:SetDieTime(math.Rand(1, 5))
+			particle:SetStartAlpha(math.random(50, 80))
 			particle:SetEndAlpha(0)
-			local Size=math.Rand(1,20)*Scl
+			local Size = math.Rand(10, 20)*Scl
 			particle:SetStartSize(Size/2)
 			particle:SetEndSize(Size)
-			particle:SetRoll(math.Rand(-2,2))
-			particle:SetRollDelta(math.Rand(-2,2))
-			local Col=math.random(180,255)
-			particle:SetColor(Col,Col,Col)
+			particle:SetRoll(math.Rand(-2, 2))
+			particle:SetRollDelta(math.Rand(-2, 2))
+			local Col = math.random(180, 255)
+			particle:SetColor(255, 255, 255)
 			particle:SetLighting(math.random(1,2)==1)
 			particle:SetCollide(false)
 		end
