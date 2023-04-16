@@ -5,9 +5,9 @@ ENT.Author="Nick"
 ENT.PrintName="EZ Repulsion Grenade"
 ENT.Category="JMod Extras - EZ Explosives"
 ENT.Spawnable=true
-ENT.JModPreferredCarryAngles=Angle(0,100,0)
-ENT.Model="models/jmod/explosives/grenades/firenade/incendiary_grenade.mdl"
-ENT.Material="models/mats_nick_nades/thermobaric"
+ENT.JModPreferredCarryAngles=Angle(0,0,90)
+ENT.Model="models/aboot/tpnade.mdl"
+--ENT.Material="models/mats_nick_nades/thermobaric"
 ENT.HardThrowStr=350
 ENT.SoftThrowStr=250
 ENT.SpoonScale=2
@@ -17,6 +17,7 @@ if(SERVER)then
 		self.NextSoundTime = 0
 		self.MaxAmountOfSounds = 3
 		self.Sounds = 0
+		self:SetSubMaterial(0, "models/mats_nick_nades/pushnade_mat")
 	end
 	function ENT:Prime()
 		self:SetState(JMod.EZ_STATE_PRIMED)
