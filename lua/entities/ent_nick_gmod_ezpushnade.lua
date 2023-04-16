@@ -13,16 +13,23 @@ ENT.SoftThrowStr=250
 ENT.SpoonScale=2
 
 if(SERVER)then
+	function ENT:CustomInit()
+		self.NextSoundTime = 0
+		self.MaxAmountOfSounds = 3
+		self.Sounds = 0
+	end
 	function ENT:Prime()
 		self:SetState(JMod.EZ_STATE_PRIMED)
 		self:EmitSound("weapons/pinpull.wav", 60, 100)
 		self:SetBodygroup(3, 1)
+		self:EmitSound("snd_jack_turretbatteryload.wav", 100, math.random(95,125))
 	end
 	function ENT:Arm()
 		self:SetBodygroup(2, 1)
 		self:SetState(JMod.EZ_STATE_ARMED)
 		self:SpoonEffect()
-		timer.Simple(2.5, function()
+		self:EmitSound("snd_jack_turretawaken.wav", 100, math.random(95,125))
+		timer.Simple(3.5, function()
 			if(IsValid(self))then 
 			self:Detonate() 
 			end
@@ -50,11 +57,11 @@ if(SERVER)then
 		timer.Simple(0.55, function()
 			ChargeUpSound:Stop()
 			util.Effect("eff_nick_gmod_pushnade_main", plooie, true, true)
-			self:EmitSound("snd_jack_fragsplodeclose.wav", 90, 140)
-			self:EmitSound("snd_jack_fragsplodeclose.wav", 90, 140)
+			self:EmitSound("snd_jack_faesplodeclose.wav", 90, 140)
 			util.ScreenShake(self:GetPos(), 32, 16, 0.75, 512)
 			util.BlastDamage(self.EZowner or self, self.EZowner or game:GetWorld(), self:GetPos(), 384, 125)
-			JMod.BlastDoors(self.EZowner, self:GetPos(), 100, 445, false)
+			JMod.WreckBuildings(self, self:GetPos(), 3)
+			JMod.BlastDoors(self, self:GetPos(), 6)
 			for k, v in pairs(ents.FindInSphere(self:GetPos(), 512)) do
 				if (v ~= self) then
 					local tr = util.QuickTrace(self:GetPos(), v:GetPos()-self:GetPos(), self)
@@ -75,6 +82,18 @@ if(SERVER)then
 			end
 			self:Remove()
 		end)
+	end
+	function ENT:CustomThink() 
+		local State, Time = self:GetState(), CurTime()
+
+		if State == JMod.EZ_STATE_ARMED then
+			if self.NextSoundTime <= Time and self.Sounds < self.MaxAmountOfSounds then 
+				self.NextSoundTime = Time + 1
+				self.Sounds = self.Sounds + 1
+				self:EmitSound("snd_jack_turretwarn.wav", 100, math.random(95,125))
+			end
+			return true
+		end
 	end
 elseif(CLIENT)then
 	function ENT:Draw()
