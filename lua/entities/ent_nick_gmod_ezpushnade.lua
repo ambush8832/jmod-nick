@@ -60,7 +60,7 @@ if(SERVER)then
 			util.Effect("eff_nick_gmod_pushnade_main", plooie, true, true)
 			self:EmitSound("snd_jack_faesplodeclose.wav", 90, 140)
 			util.ScreenShake(self:GetPos(), 32, 16, 0.75, 512)
-			util.BlastDamage(self.EZowner or self, self.EZowner or game:GetWorld(), self:GetPos(), 384, 125)
+			util.BlastDamage(self or JMod.GetEZowner(self), JMod.GetEZowner(self) or game:GetWorld(), self:GetPos(), 384, 125)
 			JMod.WreckBuildings(self, self:GetPos(), 3)
 			JMod.BlastDoors(self, self:GetPos(), 6)
 			for k, v in pairs(ents.FindInSphere(self:GetPos(), 512)) do
@@ -69,7 +69,9 @@ if(SERVER)then
 					if JMod.VisCheck(self:GetPos(), v:GetPos(), self) then
 						if IsValid((tr.Entity)) and not (blacklist[v:GetClass()]) and (tr.Entity == v) then
 							local PhysObject = v:GetPhysicsObject()
-							if IsValid((PhysObject)) then	
+							if tr.Entity:IsPlayer() then
+								tr.Entity:SetVelocity(tr.Normal * 15000 * PushMass)
+							elseif IsValid((PhysObject)) then	
 								local Mass = PhysObject:GetMass()
 								local PushMass = Mass / 10 + 0.5
 								local pushvec = tr.Normal * 15000 * PushMass
@@ -99,6 +101,21 @@ if(SERVER)then
 elseif(CLIENT)then
 	function ENT:Draw()
 		self:DrawModel()
+		--[[local SelfCenter = self:LocalToWorld(self:OBBCenter())
+		for p = 0, 20 do
+			for y = 0, 20 do
+				local Step = 360 / 21
+				local TrAng = Angle(p * (Step), y * Step, 0)
+				local Tr = util.QuickTrace(SelfCenter, TrAng:Forward() * 512, self)
+				render.DrawLine(SelfCenter, Tr.HitPos, Color(255, 255, 255, 255), false)
+				if Tr.Hit and Tr.Fraction <= .75 then
+					local TraceAng, SurfaceNorm = Tr.Normal:Angle(), Tr.HitNormal
+					TraceAng:RotateAroundAxis(SurfaceNorm, 180)
+					local Tr2 = util.QuickTrace(Tr.HitPos, -TraceAng:Forward() * (512 - (512 * Tr.Fraction)), self)
+					render.DrawLine(Tr.HitPos, Tr2.HitPos, Color(255, 255, 255, 255), false)
+				end
+			end 
+		end]]--
 	end
 	language.Add("ent_jack_gmod_ezpushnade","EZ Soundwave Repulsor Grenade")
 end
