@@ -61,7 +61,7 @@ if(SERVER)then
 					Dmg:SetDamageType(DMG_NERVEGAS)
 					Dmg:SetDamage(math.random(1,9)*JMod.Config.PoisonGasDamage)
 					Dmg:SetInflictor(self)
-					Dmg:SetAttacker(self.Owner or self)
+					Dmg:SetAttacker(self.EZowner or self)
 					Dmg:SetDamagePosition(obj:GetPos())
 					obj:TakeDamageInfo(Dmg)
 					if((obj:Health()<Helf)and(obj:IsPlayer()))then
